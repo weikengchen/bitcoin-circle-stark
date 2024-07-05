@@ -28,7 +28,7 @@ use stwo_prover::core::fri::{
     get_opening_positions, CirclePolyDegreeBound, FriConfig, FriLayerVerifier,
     FriVerificationError, FOLD_STEP,
 };
-use stwo_prover::core::pcs::quotients::{ColumnSampleBatch, fri_answers, PointSample};
+use stwo_prover::core::pcs::quotients::{fri_answers, ColumnSampleBatch, PointSample};
 use stwo_prover::core::pcs::{CommitmentSchemeVerifier, TreeVec};
 use stwo_prover::core::poly::circle::{CanonicCoset, SecureCirclePoly};
 use stwo_prover::core::poly::line::LineDomain;
@@ -550,7 +550,11 @@ pub fn verify_with_hints(
     }
 
     let fri_answers = fri_answers(
-        commitment_scheme.column_log_sizes().flatten().into_iter().collect(),
+        commitment_scheme
+            .column_log_sizes()
+            .flatten()
+            .into_iter()
+            .collect(),
         &samples,
         random_coeff,
         fri_query_domains,
@@ -581,21 +585,39 @@ pub fn verify_with_hints(
         ],
     ));
 
-    let expected_eval_left =
-        random_coeff.pow(6) * QM31::from(nominators[0].0[0] * denominator_inverses_expected[0][0][0])
-    +   random_coeff.pow(5) * QM31::from(nominators[1].0[0] * denominator_inverses_expected[0][1][0])
-    +   random_coeff.pow(4) * QM31::from(nominators[2].0[0] * denominator_inverses_expected[0][2][0])
-    +   (random_coeff.pow(3) * QM31::from(nominators[3].0[0]) + random_coeff.pow(2) * QM31::from(nominators[3].0[1]) + random_coeff * QM31::from(nominators[3].0[2]) + QM31::from(nominators[3].0[3])) * QM31::from(denominator_inverses_expected[0][3][0]);
+    let expected_eval_left = random_coeff.pow(6)
+        * QM31::from(nominators[0].0[0] * denominator_inverses_expected[0][0][0])
+        + random_coeff.pow(5)
+            * QM31::from(nominators[1].0[0] * denominator_inverses_expected[0][1][0])
+        + random_coeff.pow(4)
+            * QM31::from(nominators[2].0[0] * denominator_inverses_expected[0][2][0])
+        + (random_coeff.pow(3) * QM31::from(nominators[3].0[0])
+            + random_coeff.pow(2) * QM31::from(nominators[3].0[1])
+            + random_coeff * QM31::from(nominators[3].0[2])
+            + QM31::from(nominators[3].0[3]))
+            * QM31::from(denominator_inverses_expected[0][3][0]);
 
-    assert_eq!(expected_eval_left, fri_answers[0].subcircle_evals[0].values[0]);
+    assert_eq!(
+        expected_eval_left,
+        fri_answers[0].subcircle_evals[0].values[0]
+    );
 
-    let expected_eval_right =
-        random_coeff.pow(6) * QM31::from(nominators[0].1[0] * denominator_inverses_expected[0][0][1])
-            +   random_coeff.pow(5) * QM31::from(nominators[1].1[0] * denominator_inverses_expected[0][1][1])
-            +   random_coeff.pow(4) * QM31::from(nominators[2].1[0] * denominator_inverses_expected[0][2][1])
-            +   (random_coeff.pow(3) * QM31::from(nominators[3].1[0]) + random_coeff.pow(2) * QM31::from(nominators[3].1[1]) + random_coeff * QM31::from(nominators[3].1[2]) + QM31::from(nominators[3].1[3])) * QM31::from(denominator_inverses_expected[0][3][1]);
+    let expected_eval_right = random_coeff.pow(6)
+        * QM31::from(nominators[0].1[0] * denominator_inverses_expected[0][0][1])
+        + random_coeff.pow(5)
+            * QM31::from(nominators[1].1[0] * denominator_inverses_expected[0][1][1])
+        + random_coeff.pow(4)
+            * QM31::from(nominators[2].1[0] * denominator_inverses_expected[0][2][1])
+        + (random_coeff.pow(3) * QM31::from(nominators[3].1[0])
+            + random_coeff.pow(2) * QM31::from(nominators[3].1[1])
+            + random_coeff * QM31::from(nominators[3].1[2])
+            + QM31::from(nominators[3].1[3]))
+            * QM31::from(denominator_inverses_expected[0][3][1]);
 
-    assert_eq!(expected_eval_right, fri_answers[0].subcircle_evals[0].values[1]);
+    assert_eq!(
+        expected_eval_right,
+        fri_answers[0].subcircle_evals[0].values[1]
+    );
 
     let test_only_nominators = vec![
         nominators[0].0[0],
