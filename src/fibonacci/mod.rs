@@ -584,7 +584,7 @@ pub fn verify_with_hints(
             queried_values_right[0][4],
         ],
     ));
-
+  
     let expected_eval_left = random_coeff.pow(6)
         * QM31::from(nominators[0].0[0] * denominator_inverses_expected[0][0][0])
         + random_coeff.pow(5)
