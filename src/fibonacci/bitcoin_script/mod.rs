@@ -601,7 +601,7 @@ mod test {
                 .air
                 .component
                 .claim])));
-        let proof = prove(&fib.air, channel, vec![trace]).unwrap();
+        let proof = prove(&fib.air, channel, vec![trace.clone()]).unwrap();
 
         let channel =
             &mut BWSSha256Channel::new(BWSSha256Hasher::hash(BaseField::into_slice(&[fib
